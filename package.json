@@ -4,7 +4,8 @@
   "description": "Push Sentry event counts per project to Databox",
   "main": "index.js",
   "scripts": {
-    "test": "none"
+    "test": "none",
+    "start": "./bin/sync-data"
   },
   "repository": {
     "type": "git",
