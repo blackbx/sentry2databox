@@ -52,7 +52,7 @@ const transform = function(sentryEvents) {
 };
 
 const reportStatus = function(response) {
-  if ((response.errors ?? []).length >= 2 ){
+  if ((response.errors || []).length >= 2 ){
     console.log(response.errors[0].dataItem)
   }
   console.log(response);
