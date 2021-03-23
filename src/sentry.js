@@ -101,6 +101,7 @@ exports.getListEventsPerProject = function () {
 
               attributes: {
                 "$event_count": 1,
+                issue_id: event.groupID,
                 project: projectName,
                 "type": event["event.type"],
                 title: event.title,
@@ -115,7 +116,7 @@ exports.getListEventsPerProject = function () {
           });
         }
       });
-      console.log({ databoxArray });
+
       return databoxArray;
     });
   });
