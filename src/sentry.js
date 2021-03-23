@@ -107,7 +107,7 @@ exports.getListEventsPerProject = function () {
 
             databoxArray.push({
               date: formatedTimestamp(event.dateCreated),
-              key: event.id,
+              key: projectName,
               value: 1,
               attributes: {
                 platform: event.platform,
