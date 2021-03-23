@@ -1,7 +1,7 @@
 const request = require("request-promise-native");
 
 exports.getProjects = function() {
-  const url = "https://sentry.io/api/0/organizations/databox/projects/";
+  const url = "https://sentry.io/api/0/organizations/"+process.env.SENTRY_ORG+"/projects/";
   const options = {
     "url": url,
     "headers": {
