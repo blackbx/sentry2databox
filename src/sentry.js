@@ -78,18 +78,18 @@ exports.listProjectEvents = function (projectId) {
     });
 };
 
-const formatedTimestamp = (t)=> {
-  const d = new Date(t)
-  const date = d.toISOString().split('T')[0];
-  const time = d.toTimeString().split(' ')[0];
-  return `${date} ${time}`
-}
+const formatedTimestamp = (t) => {
+  const d = new Date(t);
+  const date = d.toISOString().split("T")[0];
+  const time = d.toTimeString().split(" ")[0];
+  return `${date} ${time}`;
+};
 
 exports.getListEventsPerProject = function () {
   that = this;
   return that.getProjects().then(function (projects) {
     //that.prejectKeyArray = Object.keys(projects).map((projectId) => projectId);
-    that.prejectKeyArray = ['1037147']
+    that.prejectKeyArray = ["1037147"];
     return Promise.all(
       that.prejectKeyArray.map((projectId) =>
         that.listProjectEvents(projects[projectId])
@@ -101,28 +101,29 @@ exports.getListEventsPerProject = function () {
         if (!!response[key]) {
           const events = response[key];
           const projectName = projects[projectId];
-     
-          events.forEach((event) => {
-            const date = new Date(event.dateCreated);
 
-            databoxArray.push({
-              date: formatedTimestamp(event.dateCreated),
-              key: projectName,
-              value: 1,
-              attributes: {
-                platform: event.platform,
-                "$event_count": 1,
-                issue_id: event.groupID,
-                project: projectName,
-                "type": event["event.type"],
-                title: event.title,
-                message: event.message,
-                serial: event.tags.find((tag) => tag.key === "serial")?.value,
-                organization_id: event.tags.find(
-                  (tag) => tag.key === "organization.id"
-                )?.value
-              },
-            });
+          events.forEach((event) => {
+            if (event.message) {
+              databoxArray.push({
+                date: formatedTimestamp(event.dateCreated),
+                key: projectName,
+                value: 1,
+                attributes: {
+                  platform: event.platform,
+                  $event_count: 1,
+                  project: projectName,
+                  type: event["event.type"],
+                  event: event.entries.find(({ type }) => type === "message")
+                    ?.data.formatted,
+                  title: event.title,
+                  message: event.message,
+                  serial: event.tags.find((tag) => tag.key === "serial")?.value,
+                  organization_id: event.tags.find(
+                    (tag) => tag.key === "organization.id"
+                  )?.value,
+                },
+              });
+            }
           });
         }
       });
