@@ -55,6 +55,11 @@ const reportStatus = function(response) {
   console.log(response);
 }
 
+sentry.getListEventsPerProject()
+  .then(databox.load)
+  .then(reportStatus)
+  .catch(reportStatus);
+
 sentry.getEventsPerProject(since)
   .then(transform)
   .then(databox.load)
