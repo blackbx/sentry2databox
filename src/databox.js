@@ -9,3 +9,4 @@ exports.load = function(payload) {
 
   return insertAllAsync(payload);
 }
+ 

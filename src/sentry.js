@@ -19,7 +19,7 @@ exports.getProjects = function () {
       const projects = JSON.parse(body);
 
       for (let i = 0; i < projects.length; i++) {
-        projectMap[projects[i].id] = projects[i].name;
+        projectMap[projects[i].id] = projects[i].slug;
       }
 
       return projectMap;
@@ -59,7 +59,7 @@ exports.listProjectEvents = function (projectId) {
     process.env.SENTRY_ORG +
     "/" +
     projectId +
-    "/events";
+    "/events/";
   const options = {
     url: url,
     headers: {
@@ -73,40 +73,49 @@ exports.listProjectEvents = function (projectId) {
       return JSON.parse(body);
     })
     .catch(function (error) {
-      console.log("code:", error.statusCode);
-      console.log("body:", error.response.body);
+      console.log("code:", error.statusCode, projectId);
+      console.log("body:", error.response.body, projectId);
     });
 };
 
-
-
 exports.getListEventsPerProject = function () {
+  that = this;
   return that.getProjects().then(function (projects) {
-    const prejectKeyArray = Object.keys(projects).map((projectId) => projectId);
+    that.prejectKeyArray = Object.keys(projects).map((projectId) => projectId);
+
     return Promise.all(
-      projectKeyArray.map((projectId) => that.listProjectEvents(projectId))
+      that.prejectKeyArray.map((projectId) =>
+        that.listProjectEvents(projects[projectId])
+      )
     ).then((response) => {
       res = {};
       const databoxArray = [];
-      prejectKeyArray.forEach((projectId, key) => {
-        const events = response[key];
-        const projectName = projects[projectId];
-        
-        databoxArray.push({
-          data: events.map(event => ({
-            date: event.dateCreated,
-            "event.type": event["event.type"],
-            title: event.title,
-            serial: event.tags.find(tag => tag.key === 'serial')?.value,
-            organization_id: event.tags.find(tag => tag.key === 'organization.id')?.value,
-          })),
-          date: date,
-          key: "errors",
-          attributes: {
-            project: projectName,
-          },
-        });
+      that.prejectKeyArray.forEach((projectId, key) => {
+        if (!!response[key]) {
+          const events = response[key];
+          const projectName = projects[projectId];
+
+          events.forEach((event) => {
+            databoxArray.push({
+              date: event.dateCreated,
+
+              attributes: {
+                "$event_count": 1,
+                project: projectName,
+                "type": event["event.type"],
+                title: event.title,
+                serial: event.tags.find((tag) => tag.key === "serial")?.value,
+                organization_id: event.tags.find(
+                  (tag) => tag.key === "organization.id"
+                )?.value,
+                "event_id": event.id
+              },
+            });
+          });
+        }
       });
+      console.log({ databoxArray });
+      return databoxArray;
     });
   });
 };
