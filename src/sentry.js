@@ -113,8 +113,6 @@ exports.getListEventsPerProject = function () {
                   $event_count: 1,
                   project: projectName,
                   type: event["event.type"],
-                  event: event.entries.find(({ type }) => type === "message")
-                    ?.data.formatted,
                   title: event.title,
                   message: event.message,
                   serial: event.tags.find((tag) => tag.key === "serial")?.value,
