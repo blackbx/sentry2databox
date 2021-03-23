@@ -59,7 +59,7 @@ exports.getEventsPerProject = function(since) {
     .then(function(response) {
       const projects = response[0];
       const events = response[1];
-
+      console.log({events, projects});
       // extract project name, date and events count and prepare structure
       // {
       //    "project name": {
