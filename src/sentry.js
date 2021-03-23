@@ -104,6 +104,7 @@ exports.getListEventsPerProject = function () {
                 project: projectName,
                 "type": event["event.type"],
                 title: event.title,
+                message: event.message,
                 serial: event.tags.find((tag) => tag.key === "serial")?.value,
                 organization_id: event.tags.find(
                   (tag) => tag.key === "organization.id"
